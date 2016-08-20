@@ -19,13 +19,20 @@ class Master:
     def __init__(self):
         self.initialize()
 
-    def loadData(self):
-        print "loading data"
-        # Load the intersections first
+    def loadIntersections(self):
         f = open('Intersections.txt', 'r')
         for line in f:
             line = line.split()
             self.m.addIntersection(line[-1])
+        f.close()
+
+    def loadStreets(self):
+        f = open('Streets.txt', 'r')
+        for line in f:
+            line = line.split()
+            self.m.addStreet(int(line[1]), int(line[2]), int(line[3]))
+        f.close()
+
 
 
     def timeStep(self):
@@ -33,16 +40,12 @@ class Master:
     
     def initialize(self):
         print "Initializing the data"
-        '''
-        # Intersections
-        self.m.addIntersection('a')
-        self.m.addIntersection('b')
-        self.m.addIntersection('c')
-        '''
 
-        # Streets
-        self.m.addStreet(0,1,10)
-        self.m.addStreet(1,2,10)
+        # Load the intersections first
+        self.loadIntersections()
+
+        # Load the streets
+        self.loadStreets()
 
         # Car1
         car1 = Car.Car(0,0, "Porsche")
