@@ -9,4 +9,6 @@
 class Car:
     # The current position of the car is a tuple with the street index and the position
     # on the street
-    currentPosition = (0,0)
+    currentPosition = []
+
+    def __init__(self, street, 

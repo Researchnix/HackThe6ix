@@ -23,7 +23,7 @@ class Master:
         print '\nintersections: '
         print m.intersections
         print '\n'
-        print '\nstrets: '
+        print '\nstreets: '
         print m.streets
         print '\n'
 
