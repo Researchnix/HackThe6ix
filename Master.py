@@ -40,6 +40,10 @@ class Master:
         # Car2
         #car2 = Car.Car(1,0, "Volkswagen")
         #self.cars.append(car2)
+
+        # RoutePlanner
+        self.navi.setMap(self.m)
+
         
         print '\n### intersections: '
         print self.m.intersections
