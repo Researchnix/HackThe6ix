@@ -17,7 +17,7 @@ if __name__ == "__main__":
     t = time.time()
 
     mas = Master.Master()
-    mas.loadData()
+    #mas.loadData()
     mas.printState()
 
 

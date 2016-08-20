@@ -15,6 +15,8 @@ class Master:
     m = Map.Map()       # Map...
     cars = []           # List of cars on the map
     navi = RoutePlanner.RoutePlanner()
+    # Position from which you can't progress to the next one
+    blocked = []
 
     def __init__(self):
         self.initialize()
@@ -33,10 +35,17 @@ class Master:
             self.m.addStreet(int(line[1]), int(line[2]), int(line[3]))
         f.close()
 
+    def canProgress(self, car):
+        return True
 
+    def nextPosition(self, car):
+        result = []
+        return result
 
     def timeStep(self):
-        pass
+        for c in self.cars:
+            if self.canProgress(c):
+                pass
     
     def initialize(self):
         print "Initializing the data"
