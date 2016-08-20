@@ -58,10 +58,12 @@ class Master:
 
         # Car1
         car1 = Car.Car(0,0, "Porsche")
+        car1.FineRoute
         self.cars.append(car1)
 
+
         # Car2
-        #car2 = Car.Car(1,0, "Volkswagen")
+        #car2 = Car.Car(1,4, "Volkswagen")
         #self.cars.append(car2)
 
         # RoutePlanner
@@ -79,4 +81,5 @@ class Master:
 
     def printCars(self):
         for c in self.cars:
-            print c.name + " on " + str(c.street) + " at " + str(c.pos)
+            #print c.name + " on " + str(c.street) + " at " + str(c.pos)
+            print c.name + " on " + str(c.curPos)

@@ -9,19 +9,22 @@
 class Car:
     # The current position of the car is a pair with the street index and the position
     # on the street
-    street = 0
-    pos = 0
+    #street = 0
+    #pos = 0
+    curPos = (0,0)
     nextIntersection = 0
     name = ""
     # Index of desired intersection to travel to
     destination = 0
     # The route is a list of intersections which the 
     # car is going to take
-    route = []
+    foarseRoute = []
+    fineRoute = []
 
     def __init__(self, street, posOnStreet, name):
-        self.street = street
-        self.pos = posOnStreet
+        #self.street = street
+        #self.pos = posOnStreet
+        self.curPos = (street, posOnStreet)
         self.name = name
 
     def setDest(self, dest):
