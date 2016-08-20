@@ -8,11 +8,13 @@
 
 import Map
 import Car
+import RoutePlanner
 
 # the main traffic coordinator
 class Master:
     m = Map.Map()       # Map...
     cars = []           # List of cars on the map
+    navi = RoutePlanner.RoutePlanner()
 
     def __init__(self):
         self.initialize()
