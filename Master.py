@@ -19,15 +19,26 @@ class Master:
     def __init__(self):
         self.initialize()
 
+    def loadData(self):
+        print "loading data"
+        # Load the intersections first
+        f = open('Intersections.txt', 'r')
+        for line in f:
+            line = line.split()
+            self.m.addIntersection(line[-1])
+
+
     def timeStep(self):
         pass
     
     def initialize(self):
         print "Initializing the data"
+        '''
         # Intersections
         self.m.addIntersection('a')
         self.m.addIntersection('b')
         self.m.addIntersection('c')
+        '''
 
         # Streets
         self.m.addStreet(0,1,10)
@@ -45,6 +56,7 @@ class Master:
         self.navi.setMap(self.m)
 
         
+    def printState(self):
         print '\n### intersections: '
         print self.m.intersections
         print '### streets: '

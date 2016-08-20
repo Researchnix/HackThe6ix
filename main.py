@@ -16,6 +16,9 @@ import Master
 if __name__ == "__main__":
     t = time.time()
 
-    trafficHandler = Master.Master()
+    mas = Master.Master()
+    mas.loadData()
+    mas.printState()
+
 
     print "\n\nDone in " + str(time.time() - t) + " s"
