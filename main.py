@@ -17,6 +17,5 @@ if __name__ == "__main__":
     t = time.time()
 
     trafficHandler = Master.Master()
-    trafficHandler.test()
 
     print "\n\nDone in " + str(time.time() - t) + " s"

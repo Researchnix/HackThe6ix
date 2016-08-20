@@ -7,23 +7,46 @@
 #
 
 import Map
+import Car
 
 # the main traffic coordinator
 class Master:
+    m = Map.Map()       # Map...
+    cars = []           # List of cars on the map
 
-    def test(self):
-        m = Map.Map()
-        m.addIntersection('a')
-        m.addIntersection('b')
-        m.addIntersection('c')
+    def __init__(self):
+        self.initialize()
 
-        m.addStreet(0,1,10)
-        m.addStreet(1,2,10)
+    def timeStep(self):
+        pass
+    
+    def initialize(self):
+        print "Initializing the data"
+        # Intersections
+        self.m.addIntersection('a')
+        self.m.addIntersection('b')
+        self.m.addIntersection('c')
 
-        print '\nintersections: '
-        print m.intersections
+        # Streets
+        self.m.addStreet(0,1,10)
+        self.m.addStreet(1,2,10)
+
+        # Car1
+        car1 = Car.Car(0,0, "Porsche")
+        self.cars.append(car1)
+
+        # Car2
+        #car2 = Car.Car(1,0, "Volkswagen")
+        #self.cars.append(car2)
+        
+        print '\n### intersections: '
+        print self.m.intersections
+        print '### streets: '
+        print self.m.streets
+        print '### cars: '
+        self.printCars()
         print '\n'
-        print '\nstreets: '
-        print m.streets
-        print '\n'
 
+    def printCars(self):
+        for c in self.cars:
+            print c.name + " on " + str(c.street) + " at " + str(c.pos)
