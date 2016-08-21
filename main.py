@@ -19,6 +19,12 @@ if __name__ == "__main__":
     mas = Master.Master()
     #mas.loadData()
     mas.printState()
+    mas.blocked.append((0,3))
+    for i in range(17):
+        mas.timeStep()
+        mas.printCars()
+        if i == 6:
+            mas.blocked.remove((0,3))
 
 
     print "\n\nDone in " + str(time.time() - t) + " s"

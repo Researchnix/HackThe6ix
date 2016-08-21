@@ -14,12 +14,15 @@ class Car:
     curPos = (0,0)
     nextIntersection = 0
     name = ""
-    # Index of desired intersection to travel to
+    # Index of starting intersection and desired intersection to travel to
+    start = 0
     destination = 0
     # The route is a list of intersections which the 
     # car is going to take
-    foarseRoute = []
+    coarseRoute = []
     fineRoute = []
+    
+    destinationReached = False
 
     def __init__(self, street, posOnStreet, name):
         #self.street = street
@@ -29,4 +32,7 @@ class Car:
 
     def setDest(self, dest):
         self.destination = dest
+
+    def nextPos(self):
+        return self.fineRoute[0]
 

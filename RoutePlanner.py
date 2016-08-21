@@ -17,6 +17,12 @@ class RoutePlanner:
         
     # This function returns the list of intersections
     # that leads from start to finish on the map m
-    def findRoute(self, start, finish):
+    def calcCoarseRoute(self, start, finish):
+        result = []
+        return result
+
+    # This function calculates the fine route dependent
+    # on the previously computed coarse route
+    def calcFineRoute(self, coarse):
         result = []
         return result
