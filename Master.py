@@ -15,7 +15,7 @@ import RandomGenerator
 
 # the main traffic coordinator
 class Master:
-    maxRunTime = 1000
+    maxRunTime = 10000
     m = Map.Map()       # Map...
     random = RandomGenerator.RandomGenerator()
     cars = []           # List of cars on the map
@@ -64,8 +64,13 @@ class Master:
         # start, destination, name
         car1 = Car.Car(5, 11, "Porsche   ")
         car2 = Car.Car(19, 18, "Volkswagen")
+        car3 = Car.Car(27, 11, "A")
+        car4 = Car.Car(11, 5, "B")
         self.cars.append(car1)
         self.cars.append(car2)
+        self.cars.append(car3)
+        self.cars.append(car4)
+        #self.initializeRandomCars(8)
         # Calculate all the routes of the cars
         self.calculateRoutes()
         # Prepare the evaluation of the efficiency
@@ -79,7 +84,16 @@ class Master:
         print '... done!'
 
     def initializeRandomCars(self, n):
+        everywhere = self.m.intersections
         available = self.m.intersections
+        for x in range(n):
+            start  = available[randint(0,len(available)-1)]
+            finish  = everywhere[randint(0,len(everywhere)-1)]
+            name = "car" + str(x)
+            if not start == finish:
+                self.cars.append( Car.Car(start, finish, name) )
+            available.remove(start)
+
         
 
     def initializeInterState(self):
@@ -205,7 +219,7 @@ class Master:
             #########################
             # Insert the model here #
             #########################
-            self.useModel1(19, t)
+            self.useModel1(8, t)
             #self.useModel2(10, 10, t)
             if len(self.cars) == 0:
                 break
