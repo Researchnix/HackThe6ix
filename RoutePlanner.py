@@ -12,25 +12,21 @@ class RoutePlanner:
     """ Class that find the route that each car should take """
     m = Map.Map()
     graph = {}
-
-
-
-    def setMap(self, m):
+        def setMap(self, m):
         self.m = m
         for node in m.streets:
             if node[0] not in self.graph:
-                self.graph[node[0]] = {node[1]: node[2]}
+               self.graph[node[0]] = {node[1]: node[2]}
+            else:
+                self.graph[node[0]][node[1]] = node[2]
             if node[1] not in self.graph:
                 self.graph[node[1]] = {node[0]: node[2]}
             else:
-                self.graph[node[0]][node[1]] = node[2]
                 self.graph[node[1]][node[0]] = node[2]
     
-        
     # This function returns the list of intersections
     # that leads from start to finish on the map m
     def calcCoarseRoute(self, start, finish):
-        """
         distances = {}
         predecessors = {}
         to_assess = self.graph.keys()
@@ -41,7 +37,7 @@ class RoutePlanner:
         distances[start] = 0
         while len(sp_set) < len(to_assess):
             still_in = {node: distances[node] for node in [node for node in to_assess if node not in sp_set]}
-            closest = min(still_in, key = distances.get)
+            closest = min(still_in, key=distances.get)
             sp_set.append(closest)
             for node in self.graph[closest]:
                 if distances[node] > distances[closest] + self.graph[closest][node]:
