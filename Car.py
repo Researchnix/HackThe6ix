@@ -21,6 +21,7 @@ class Car:
     # car is going to take
     coarseRoute = []
     fineRoute = []
+    time = 0
     
     destinationReached = False
 

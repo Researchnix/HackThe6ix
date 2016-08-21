@@ -6,6 +6,8 @@
 #  Copyright 2016 Researchnix. All rights reserved.
 #
 
+from random import *
+
 import Map
 import Car
 import RoutePlanner
@@ -13,6 +15,7 @@ import RandomGenerator
 
 # the main traffic coordinator
 class Master:
+    maxRunTime = 1000
     m = Map.Map()       # Map...
     random = RandomGenerator.RandomGenerator()
     cars = []           # List of cars on the map
@@ -28,6 +31,9 @@ class Master:
     # 4X horizontal, vertical, hleft, vleft
     # or RED, meaning everything is red
     interState = {}
+    # Evaluation stuff
+    numberOfCars = 2
+    travelLength = {}
 
     def __init__(self):
         self.initialize()
@@ -56,24 +62,34 @@ class Master:
 
         # Initialize so far only one car
         # start, destination, name
-        car1 = Car.Car(0, 6, "Porsche   ")
-        car2 = Car.Car(1, 5, "Volkswagen")
+        car1 = Car.Car(5, 11, "Porsche   ")
+        car2 = Car.Car(19, 18, "Volkswagen")
         self.cars.append(car1)
         self.cars.append(car2)
         # Calculate all the routes of the cars
         self.calculateRoutes()
-        
+        # Prepare the evaluation of the efficiency
+        self.numberOfCars = len(self.cars)
+        for c in self.cars:
+            self.travelLength[c.name] = len(c.fineRoute)
         # Initialize blocked positions
         # A) by cars
         for c in self.cars:
             self.blocked.append(c.curPos)
         print '... done!'
 
+    def initializeRandomCars(self, n):
+        available = self.m.intersections
+        
+
     def initializeInterState(self):
+        # make everything TL that has 2 roards or less GREEN
         for i in self.m.intersections:
-            self.interState[i] = "RED"
-        print "POS 1"
-        print self.interState
+            if self.m.character[i] <= 2:
+                self.interState[i] = "GREEN"
+            else:
+                self.interState[i] = "RED"
+        self.updateInterState()
 
     def initializeTrafficLights(self):
         for i in self.m.intersections:
@@ -101,15 +117,18 @@ class Master:
                 self.m.addStreet(int(remaining), to, 0)
         f.close()
         # Now load the lengths from dist.txt
-        f = open('dist.txt', 'r')
-        for line in f:
-            line = line.split()
-            self.m.setDist(int(line[0]), int(line[1]), int(line[2]))
-        f.close()
+        #f = open('dist.txt', 'r')
+        #for line in f:
+        #    line = line.split()
+            #self.m.setDist(int(line[0]), int(line[1]), int(line[2]))
+        #f.close()
+        ''' Trick: every dist = 10 '''
+        for x in self.m.streets:
+            x[-1] = 10
 
     def printCars(self):
         for c in self.cars:
-            print c.name + " on " + str(c.curPos) + " with route " + str(c.fineRoute)
+            print c.name + " on " + str(c.curPos) + " with route " + str(c.fineRoute[:5])
 
     def printState(self):
         print '\nThe current state of the program is'
@@ -119,7 +138,7 @@ class Master:
         print self.m.streets
         print '### incoming: '
         print self.m.incoming
-        print '### characteristics: '
+        print '### character: '
         print self.m.character
         print '### traffic lights: '
         print self.trafficLights
@@ -174,6 +193,40 @@ class Master:
     """ """ """ """ """ """
     """ """ """ """ """ """
 
+    # Do 1000 steps to try to get every car to its destination
+    def run(self):
+        print "\n\n"
+        print "######################################################################"
+        print "TIME STEPPING STARTS HERE"
+        print "######################################################################"
+        print "\n\n"
+        evaluation = {}
+        for t in range(1,self.maxRunTime):
+            #########################
+            # Insert the model here #
+            #########################
+            self.useModel1(10, t)
+            if len(self.cars) == 0:
+                break
+            self.timeStep()
+            self.printCars()
+            # Check if any car reached its destination
+            for c in self.cars:
+                if c.destinationReached:
+                    evaluation[c.name] = t
+                    self.blocked.remove(c.curPos)
+                    self.cars.remove(c)
+        print "\n\n"
+        print "######################################################################"
+        print "All cars are done ... or the time is up "
+        print "Evaluation of the time it took each car " + str(evaluation)
+        print "Total time a car was using fuel = " + str(sum(evaluation.values()))
+        print "Relative inefficiency =  " + str(sum(evaluation.values()) / self.numberOfCars)
+        print "\n\n"
+        diff = [evaluation.values()[c] -self.travelLength.values()[c] for c in range(len(evaluation))]
+        print "Time a car was standing still =" + str(diff)
+        print "Overall time a car was waiting for a traffic light = " + str(sum(diff))
+
     def canProgress(self, car):
         return not (car.nextPos() in self.blocked)
 
@@ -181,7 +234,13 @@ class Master:
         for c in self.cars:
             if not c.destinationReached:
                 if self.canProgress(c):
-                    self.blocked.remove(c.curPos)   # clear the spot that the car was on
+                    # We have a ghosting problem, due to time, ignore the error...
+                    # This error appears exactly when the traffic lights free an
+                    # intersection that is still occupied by a car. Hence when the car 
+                    # moves on, it can't free its last position that's already free
+                    if c.curPos in self.blocked:
+                        # clear the spot that the car was on
+                        self.blocked.remove(c.curPos)
                     c.curPos = c.fineRoute.pop(0)             # move car forward by one unit
                     self.blocked.append(c.curPos)   # call dips on the current position
                     if len(c.fineRoute) == 0:
@@ -261,3 +320,21 @@ class Master:
         self.interState[inter] = mode
         self.updateInterState()
         
+
+
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+    """ TRAFFIC MODELS  """
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+
+    # Model 1 sets every intersection for some interval par to horizontal and then reversed
+    def useModel1(self, par, curTime):
+        # One line solution, haha !!
+        signal = [int(float(i)/4) % 2 for i in range(self.maxRunTime)]
+        if signal[curTime] == 0:
+            for i in self.m.fourFoldInter:
+                self.changeInterState(i, 'horizontal')
+        else:
+            for i in self.m.fourFoldInter:
+                self.changeInterState(i, 'vertical')

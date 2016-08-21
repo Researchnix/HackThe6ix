@@ -13,6 +13,7 @@ class Map:
     streets = []
     incoming = {}
     character = {}
+    fourFoldInter = []
 
 
     # the index could also be a label
@@ -49,6 +50,7 @@ class Map:
                     result.append(self.streets.index(s))
             self.incoming[i] = result
             self.character[i] = len(result)
+        self.fourFoldInter = [i for i in self.intersections if self.character[i] == 4]
 
     def lastPos(self, street):
         length = self.streets[street][2]
