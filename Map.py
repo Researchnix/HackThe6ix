@@ -11,9 +11,9 @@ import Street
 class Map:
     intersections = []
     streets = []
-    incoming = {}
-    character = {}
-    fourFoldInter = []
+    incoming = {}      # dic from intersections to incoming streets to this intersection
+    character = {}     # number of incoming streets for each crossing
+    fourFoldInter = [] # all intersections with character 4
 
 
     # the index could also be a label

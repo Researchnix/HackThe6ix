@@ -2,7 +2,7 @@
 #  Master.py
 #  HackThe6ix
 #
-#  Created by Jeffrey, Maliha, Justin  and Lennart on 2016-08-06.
+#  Created by Jeffrey, Maliha and Lennart on 2016-08-20.
 #  Copyright 2016 Researchnix. All rights reserved.
 #
 
@@ -11,18 +11,22 @@ from random import *
 import Map
 import Car
 import RoutePlanner
-import RandomGenerator
 
 # the main traffic coordinator
 class Master:
+    ''' constants'''
     maxRunTime = 10000
+    verbose = True
+
+    ''' time stepping '''
     m = Map.Map()       # Map...
-    random = RandomGenerator.RandomGenerator()
     cars = []           # List of cars on the map
-    navi = RoutePlanner.RoutePlanner()
+    navi = RoutePlanner.RoutePlanner()      # Navigation device
     # Position from which you can't progress to the next one
-    blocked = []
-    # redLights is a dictionary indicating which incoming streets are blocked
+    blocked = [] 
+    # trafficLights is a dictionary containing a dictionary with keys Red and Green returning a list of Red and Green files
+
+    ''' traffic lights'''
     trafficLights = {}
     # Give each intersection the state of either 
     # 1X always green
@@ -30,19 +34,26 @@ class Master:
     # 3X TODO
     # 4X horizontal, vertical, hleft, vleft
     # or RED, meaning everything is red
+    # all GREEN is an unusual state...
     interState = {}
-    # Evaluation stuff
+
+    # Evaluation helpers
     numberOfCars = 2
     travelLength = {}
+
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### INITIALIZATION ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+
+
+
 
     def __init__(self):
         self.initialize()
     
-    """ """ """ """ """ """
-    """ """ """ """ """ """
-    """  LOADING STUFF  """
-    """ """ """ """ """ """
-    """ """ """ """ """ """
 
     def initialize(self):
         print "Initializing the Master with a map from text files and one car"
@@ -119,6 +130,14 @@ class Master:
             self.m.addIntersection(int(line[0]))
         f.close()
 
+
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### LOADING DATA ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+
     def loadStreets(self):
         # First add streets in right orientation
         # Format of ori.txt is
@@ -139,6 +158,14 @@ class Master:
         ''' Trick: every dist = 10 '''
         for x in self.m.streets:
             x[-1] = 10
+
+
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### OUTPUT METHODS ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
     def printCars(self):
         for c in self.cars:
@@ -167,11 +194,9 @@ class Master:
 
 
 
-    """ """ """ """ """ """
-    """ """ """ """ """ """
-    """ ROUTE CALCULATION """
-    """ """ """ """ """ """
-    """ """ """ """ """ """
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ROUTE CALCULATION ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
     def calculateRoutes(self):
         # Give every car a coarse route
@@ -201,13 +226,11 @@ class Master:
 
 
 
-    """ """ """ """ """ """
-    """ """ """ """ """ """
-    """ STEPPING STUFF """
-    """ """ """ """ """ """
-    """ """ """ """ """ """
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### STEPPING FUNCTIONS ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
-    # Do 1000 steps to try to get every car to its destination
+    # Do as many as maxRunTime steps to try to get every car to its destination
     def run(self):
         print "\n\n"
         print "######################################################################"
@@ -224,7 +247,8 @@ class Master:
             if len(self.cars) == 0:
                 break
             self.timeStep()
-            self.printCars()
+            if self.verbose:
+                self.printCars()
             # Check if any car reached its destination
             for c in self.cars[::-1]:
                 if c.destinationReached:
@@ -245,6 +269,8 @@ class Master:
     def canProgress(self, car):
         return not (car.nextPos() in self.blocked)
 
+
+    # One time step in which every car that can potentially progress progresses.
     def timeStep(self):
         for c in self.cars:
             if not c.destinationReached:
@@ -262,11 +288,14 @@ class Master:
                         c.destinationReached = True
         
 
-    """ """ """ """ """ """
-    """ """ """ """ """ """
-    """ TRAFFIC LIGHTS  """
-    """ """ """ """ """ """
-    """ """ """ """ """ """
+
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### TRAFFIC LIGHT FUNCTIONs### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+
     def updateBlocked(self):
         for i in self.m.intersections:
             # We need to remove all blocks from this intersections that are in Green
@@ -345,11 +374,9 @@ class Master:
         
 
 
-    """ """ """ """ """ """
-    """ """ """ """ """ """
-    """ TRAFFIC MODELS  """
-    """ """ """ """ """ """
-    """ """ """ """ """ """
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### TRAFFIC MODELS ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
     # Model 1 sets every intersection for some interval par to horizontal and then reversed
     def useModel1(self, par, curTime):
