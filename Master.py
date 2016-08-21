@@ -205,13 +205,14 @@ class Master:
             #########################
             # Insert the model here #
             #########################
-            self.useModel1(10, t)
+            self.useModel1(19, t)
+            #self.useModel2(10, 10, t)
             if len(self.cars) == 0:
                 break
             self.timeStep()
             self.printCars()
             # Check if any car reached its destination
-            for c in self.cars:
+            for c in self.cars[::-1]:
                 if c.destinationReached:
                     evaluation[c.name] = t
                     self.blocked.remove(c.curPos)
@@ -319,6 +320,14 @@ class Master:
     def changeInterState(self, inter, mode):
         self.interState[inter] = mode
         self.updateInterState()
+
+    #Flips state from horizontal to vertical and vice versa
+    def flipInterState(self, inter):
+        if self.interState[inter] == 'horizontal':
+            self.interState[inter] = 'vertical'
+        else:       # default for RED or GREEN
+            self.interState[inter] = 'horizontal'
+        self.updateInterState()
         
 
 
@@ -331,10 +340,22 @@ class Master:
     # Model 1 sets every intersection for some interval par to horizontal and then reversed
     def useModel1(self, par, curTime):
         # One line solution, haha !!
-        signal = [int(float(i)/4) % 2 for i in range(self.maxRunTime)]
+        signal = [int(float(i)/par) % 2 for i in range(self.maxRunTime)]
         if signal[curTime] == 0:
             for i in self.m.fourFoldInter:
                 self.changeInterState(i, 'horizontal')
         else:
             for i in self.m.fourFoldInter:
                 self.changeInterState(i, 'vertical')
+
+    # Random Model flips every par1 interval par2 of the fourFoldInter
+    def useModel2(self, par1, par2, curTime):
+        signal = [0 for y in range(self.maxRunTime)]
+        for i in range(self.maxRunTime):
+            if i%par1 == 0:
+                signal[i] = 1
+
+        if signal[curTime] == 1:
+            for x in range(par2):
+                i = randint(0,len(self.m.fourFoldInter)-1)
+                self.flipInterState(self.m.fourFoldInter[i])

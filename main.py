@@ -10,6 +10,7 @@ import sys
 import time
 
 import Master
+#import visualization
 
 
 
@@ -19,11 +20,8 @@ if __name__ == "__main__":
     # Initialize the Master and check its state
     mas = Master.Master()
     mas.printState()
-
-
-
-
     mas.run()
+    #visualization.visualization()
 
 
     print "\n\nDone in " + str(time.time() - t) + " s"
