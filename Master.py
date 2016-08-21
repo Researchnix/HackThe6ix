@@ -9,10 +9,12 @@
 import Map
 import Car
 import RoutePlanner
+import RandomGenerator
 
 # the main traffic coordinator
 class Master:
     m = Map.Map()       # Map...
+    random = RandomGenerator.RandomGenerator()
     cars = []           # List of cars on the map
     navi = RoutePlanner.RoutePlanner()
     # Position from which you can't progress to the next one
@@ -85,6 +87,9 @@ class Master:
         print self.m.streets
         self.printCars()
         print '\n'
+
+        print self.random.generateIntersections(10)
+        #print self.random.generateStreets(10, 15, 5)
 
 
 
