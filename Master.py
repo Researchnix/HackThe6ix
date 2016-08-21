@@ -37,6 +37,7 @@ class Master:
 
 
 
+
         self.blocked.append((0,0))
         for i in range(1,5):
             car1.fineRoute.append((0,i))
@@ -79,19 +80,26 @@ class Master:
         self.printCars()
         print '\n'
 
+
+
+
+
+
     """ ROUTE CALCULATION """
 
     def calculateRoutes(self):
         # Give every car a coarse route
         for c in self.cars:
-            c.coarseRoute = self.navi.findRoute(c.start, c.destination)
+            c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
 
-        self.cars[0].coarseRoute = [2,3,6]
+        #self.cars[0].coarseRoute = [2,3,6]
 
         # Give every car a fine route based on its coarse route
         # move this function to Routeplanner later
+        #for c in self.cars:
+        #    c.fineRoute = self.navi.calcFineRoute(c.coarseRoute)
         for c in self.cars:
-            c.fineRoute = self.navi.calcFineRoute(c.coarseRoute)
+            print c.coarseRoute
 
 
 
