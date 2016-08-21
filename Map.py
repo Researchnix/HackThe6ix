@@ -30,9 +30,10 @@ class Map:
 
 
     # Find the right street connecting two intersections
-    # The resulst should by assumption exist and be unique!!
+    # The resulst should by assumption exist and be unique
+    # up to direction
     def findStreet(self, start, finish):
         t = [start, finish]
         for s in self.streets:
-            if s[:2] == t or s[:2] == t[::-1]:
+            if s[:2] == t:
                 return self.streets.index(s)

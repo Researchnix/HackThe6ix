@@ -71,6 +71,7 @@ class Master:
         for line in f:
             line = line.split()
             self.m.addStreet(int(line[1]), int(line[2]), int(line[3]))
+            self.m.addStreet(int(line[2]), int(line[1]), int(line[3]))
         f.close()
 
     def printCars(self):
@@ -101,7 +102,7 @@ class Master:
         #for c in self.cars:
         #    c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
 
-        self.cars[0].coarseRoute = [0,2,3,6]
+        self.cars[0].coarseRoute = [0,2]
 
         for c in self.cars:
             print c.name + '   coarse   ' + str(c.coarseRoute)
