@@ -49,9 +49,27 @@ class RoutePlanner:
         result = path[::-1]
         return result
 
+
     # This function calculates the fine route dependent
     # on the previously computed coarse route
     def calcFineRoute(self, coarse):
-        result = []
-        return result
+        fine = []
+        # Iterate over every way point except the last one
+        # and add the fine points of every street connecting
+        # the way point with its successor by the fine route
+        for w in range(len(coarse) - 1) :
+            street = self.m.findStreet(coarse[w], coarse[w+1])
+            length = self.m.streets[street][-1]
+            # doe the fine route
+            for i in range(length):
+                fine.append((street, i + 1))
+        return fine
+
+
+
+
+        
+
+
+
 

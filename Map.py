@@ -11,6 +11,8 @@ import Street
 class Map:
     intersections = []
     streets = []
+    incoming = {}
+    character = {}
 
 
     # the index could also be a label
@@ -37,3 +39,17 @@ class Map:
         for s in self.streets:
             if s[:2] == t:
                 return self.streets.index(s)
+
+    def calcIncomingStreets(self):
+        for i in self.intersections:
+            result = []
+            for s in self.streets:
+                if s[1] == i:
+                    result.append(self.streets.index(s))
+            self.incoming[i] = result
+            self.character[i] = len(result)
+
+    def lastPos(self, street):
+        length = self.streets[street][2]
+        return (street,length)
+        

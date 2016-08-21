@@ -16,18 +16,17 @@ import Master
 if __name__ == "__main__":
     t = time.time()
 
+    # Initialize the Master and check its state
     mas = Master.Master()
-    #mas.loadData()
     mas.printState()
-    mas.blocked.append((0,3))
-    for i in range(17):
+
+
+    # Do a time step
+    for i in range(30):
         mas.timeStep()
         mas.printCars()
-        if i == 6:
-            mas.blocked.remove((0,3))
-
-    print "\nROUTE CLAC STUFF"
-    mas.calculateRoutes()
+        if i == 10:
+            mas.turnGreen(2,0)
 
 
 

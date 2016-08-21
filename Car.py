@@ -24,10 +24,10 @@ class Car:
     
     destinationReached = False
 
-    def __init__(self, street, posOnStreet, name):
-        #self.street = street
-        #self.pos = posOnStreet
-        self.curPos = (street, posOnStreet)
+    def __init__(self, start, destination, name):
+        #self.curPos = (street, posOnStreet)
+        self.start = start
+        self.destination = destination
         self.name = name
 
     def setDest(self, dest):

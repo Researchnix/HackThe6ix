@@ -19,47 +19,56 @@ class Master:
     navi = RoutePlanner.RoutePlanner()
     # Position from which you can't progress to the next one
     blocked = []
+    # redLights is a dictionary indicating which incoming streets are blocked
+    trafficLights = {}
 
     def __init__(self):
         self.initialize()
     
-    def initialize(self):
-        print "Initializing the data"
-
-        # Load the intersections first
-        self.loadIntersections()
-
-        # Load the streets
-        self.loadStreets()
-
-        # Car1
-        car1 = Car.Car(0,0, "Porsche")
-        car1.start = 0
-        car1.destination = 6
-
-
-
-
-        self.blocked.append((0,0))
-        for i in range(1,5):
-            car1.fineRoute.append((0,i))
-        for i in range(1,5):
-            car1.fineRoute.append((1,i))
-        self.cars.append(car1)
-
-
-        # Car2
-        #car2 = Car.Car(1,4, "Volkswagen")
-        #self.cars.append(car2)
-
-        # RoutePlanner
-        self.navi.setMap(self.m)
-
     """ """ """ """ """ """
     """ """ """ """ """ """
     """  LOADING STUFF  """
     """ """ """ """ """ """
     """ """ """ """ """ """
+
+    def initialize(self):
+        print "Initializing the Master with a map from text files and one car"
+
+        # Load the intersections first
+        self.loadIntersections()
+        # Load the streets
+        self.loadStreets()
+        # Initialize the navi
+        self.navi.setMap(self.m)
+        # Initialize incomingStreets in the map
+        self.m.calcIncomingStreets()
+        # Initialize all traffic lights to red :D
+        self.initializeTrafficLights()
+        self.updateBlocked()
+
+        # Initialize so far only one car
+        # start, destination, name
+        car1 = Car.Car(0, 6, "Porsche   ")
+        car2 = Car.Car(1, 5, "Volkswagen")
+        self.cars.append(car1)
+        self.cars.append(car2)
+        # Calculate all the routes of the cars
+        self.calculateRoutes()
+        
+        # Initialize blocked positions
+        # A) by cars
+        for c in self.cars:
+            self.blocked.append(c.curPos)
+
+
+        print '... done!'
+
+    def initializeTrafficLights(self):
+        for i in self.m.intersections:
+            state = {}
+            state['Green'] = []
+            state['Red'] = self.m.incoming[i]
+            self.trafficLights[i] = state
 
     def loadIntersections(self):
         f = open('Intersections.txt', 'r')
@@ -77,19 +86,24 @@ class Master:
         f.close()
 
     def printCars(self):
-        print '### cars: '
-        self.printCars()
+        for c in self.cars:
+            print c.name + " on " + str(c.curPos) + " with route " + str(c.fineRoute)
 
     def printState(self):
+        print '\n The current state of the program is'
         print '\n### intersections: '
         print self.m.intersections
         print '### streets: '
         print self.m.streets
+        print '### incoming: '
+        print self.m.incoming
+        print '### characteristics: '
+        print self.m.character
+        print '### traffic lights: '
+        print self.trafficLights
+        print '### cars: '
         self.printCars()
         print '\n'
-
-        print self.random.generateIntersections(10)
-        #print self.random.generateStreets(10, 15, 5)
 
 
 
@@ -106,42 +120,23 @@ class Master:
         # Give every car a coarse route
         for c in self.cars:
             c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
-
-        self.cars[0].coarseRoute = [2,0]
-
-        for c in self.cars:
-            print c.name + '   coarse   ' + str(c.coarseRoute)
-
+        #for c in self.cars:
+        #    print c.name + '   coarse   ' + str(c.coarseRoute)
         # Give every car a fine route based on its coarse route
         # move this function to Routeplanner later
         for c in self.cars:
-            c.fineRoute = self.calcFineRoute(c.coarseRoute)
-
-        for c in self.cars:
-            print c.name + '   fine   ' + str(c.fineRoute)
-
-
-    # This function calculates the fine route dependent
-    # on the previously computed coarse route
-    def calcFineRoute(self, coarse):
-        fine = []
-        # Iterate over every way point except the last one
-        # and add the fine points of every street connecting
-        # the way point with its successor by the fine route
-        for w in range(len(coarse) - 1) :
-            street = self.m.findStreet(coarse[w], coarse[w+1])
-            length = self.m.streets[street][-1]
-            # doe the fine route
-            for i in range(length):
-                fine.append((street, i + 1))
-        return fine
-
-
-
-
+            c.fineRoute = self.navi.calcFineRoute(c.coarseRoute)
+        #for c in self.cars:
+        #    print c.name + '   fine   ' + str(c.fineRoute)
         
-
-
+        # Update general car information
+        # That is, find initial direction of travel from coarse route,
+        # update nextIntersection and calculate therewith the street
+        # and curPos the car should be on.
+        for c in self.cars:
+            c.nextIntersection = c.coarseRoute[1]
+            street = self.m.findStreet(c.start, c.nextIntersection)
+            c.curPos = (street, 0)
 
 
 
@@ -169,7 +164,33 @@ class Master:
                         c.destinationReached = True
         
 
-    def printCars(self):
-        for c in self.cars:
-            #print c.name + " on " + str(c.street) + " at " + str(c.pos)
-            print c.name + " on " + str(c.curPos) + " with route " + str(c.fineRoute)
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+    """ TRAFFIC LIGHTS  """
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+    def updateBlocked(self):
+        for i in self.m.intersections:
+            # We need to remove all blocks from this intersections that are in Green
+            # and add all the ones that are in Red
+            for g in self.trafficLights[i]['Green']:
+                street = self.m.lastPos(g)
+                if street in self.blocked:
+                    # Remove (g, last elem of g)
+                    self.blocked.remove(street)
+            for r in self.trafficLights[i]['Red']:
+                street = self.m.lastPos(r)
+                if street  not in self.blocked:
+                    # Add (r, last elem of r)
+                    self.blocked.append(street)
+            
+
+    def turnGreen(self, inter, street):
+        self.trafficLights[inter]['Red'].remove(street)
+        self.trafficLights[inter]['Green'].append(street)
+        self.updateBlocked()
+
+    def turnRed(self, inter, street):
+        self.trafficLights[inter]['Green'].remove(street)
+        self.trafficLights[inter]['Red'].append(street)
+        self.updateBlocked()
