@@ -12,7 +12,7 @@ class RoutePlanner:
     """ Class that find the route that each car should take """
     m = Map.Map()
     graph = {}
-        def setMap(self, m):
+    def setMap(self, m):
         self.m = m
         for node in m.streets:
             if node[0] not in self.graph:
@@ -52,7 +52,6 @@ class RoutePlanner:
     # This function calculates the fine route dependent
     # on the previously computed coarse route
     def calcFineRoute(self, coarse):
-    """
         result = []
         return result
 

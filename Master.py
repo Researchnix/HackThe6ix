@@ -104,10 +104,10 @@ class Master:
 
     def calculateRoutes(self):
         # Give every car a coarse route
-        #for c in self.cars:
-        #    c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
+        for c in self.cars:
+            c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
 
-        self.cars[0].coarseRoute = [0,2]
+        self.cars[0].coarseRoute = [2,0]
 
         for c in self.cars:
             print c.name + '   coarse   ' + str(c.coarseRoute)
