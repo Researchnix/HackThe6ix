@@ -39,6 +39,7 @@ class Map:
         for s in self.streets:
             if s[:2] == t:
                 return self.streets.index(s)
+        print "NO SUCH STREET EXIST!!!!!"
 
     def calcIncomingStreets(self):
         for i in self.intersections:
@@ -52,4 +53,10 @@ class Map:
     def lastPos(self, street):
         length = self.streets[street][2]
         return (street,length)
+
+    def setDist(self, node1, node2, l):
+        s1 = self.findStreet(node1, node2)
+        s2 = self.findStreet(node2, node1)
+        self.streets[s1][2] = l
+        self.streets[s2][2] = l
         

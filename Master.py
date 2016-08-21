@@ -21,6 +21,13 @@ class Master:
     blocked = []
     # redLights is a dictionary indicating which incoming streets are blocked
     trafficLights = {}
+    # Give each intersection the state of either 
+    # 1X always green
+    # 2X always green, maybe later randomly red due to pedestrians crossing 
+    # 3X TODO
+    # 4X horizontal, vertical, hleft, vleft
+    # or RED, meaning everything is red
+    interState = {}
 
     def __init__(self):
         self.initialize()
@@ -45,6 +52,7 @@ class Master:
         # Initialize all traffic lights to red :D
         self.initializeTrafficLights()
         self.updateBlocked()
+        self.initializeInterState()
 
         # Initialize so far only one car
         # start, destination, name
@@ -59,9 +67,13 @@ class Master:
         # A) by cars
         for c in self.cars:
             self.blocked.append(c.curPos)
-
-
         print '... done!'
+
+    def initializeInterState(self):
+        for i in self.m.intersections:
+            self.interState[i] = "RED"
+        print "POS 1"
+        print self.interState
 
     def initializeTrafficLights(self):
         for i in self.m.intersections:
@@ -71,18 +83,28 @@ class Master:
             self.trafficLights[i] = state
 
     def loadIntersections(self):
-        f = open('Intersections.txt', 'r')
+        f = open('inter.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addIntersection(int(line[-1]))
+            self.m.addIntersection(int(line[0]))
         f.close()
 
     def loadStreets(self):
-        f = open('Streets.txt', 'r')
+        # First add streets in right orientation
+        # Format of ori.txt is
+        # to from1 from2 from3 ...
+        f = open('ori.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addStreet(int(line[1]), int(line[2]), int(line[3]))
-            self.m.addStreet(int(line[2]), int(line[1]), int(line[3]))
+            to = int(line.pop(0))
+            for remaining in line:
+                self.m.addStreet(int(remaining), to, 0)
+        f.close()
+        # Now load the lengths from dist.txt
+        f = open('dist.txt', 'r')
+        for line in f:
+            line = line.split()
+            self.m.setDist(int(line[0]), int(line[1]), int(line[2]))
         f.close()
 
     def printCars(self):
@@ -90,7 +112,7 @@ class Master:
             print c.name + " on " + str(c.curPos) + " with route " + str(c.fineRoute)
 
     def printState(self):
-        print '\n The current state of the program is'
+        print '\nThe current state of the program is'
         print '\n### intersections: '
         print self.m.intersections
         print '### streets: '
@@ -101,6 +123,8 @@ class Master:
         print self.m.character
         print '### traffic lights: '
         print self.trafficLights
+        print '### Intersection states: '
+        print self.interState
         print '### cars: '
         self.printCars()
         print '\n'
@@ -185,6 +209,8 @@ class Master:
                     self.blocked.append(street)
             
 
+    # To change the sign of a traffic light use this format
+    # (inter = intersection_index, street = street_index of incoming street)
     def turnGreen(self, inter, street):
         self.trafficLights[inter]['Red'].remove(street)
         self.trafficLights[inter]['Green'].append(street)
@@ -194,3 +220,28 @@ class Master:
         self.trafficLights[inter]['Green'].remove(street)
         self.trafficLights[inter]['Red'].append(street)
         self.updateBlocked()
+
+    def updateInterState(self):
+        for i in self.interState.keys():
+            if self.interState[i] == 'RED':
+                for s in self.m.incoming[i]:
+                    self.turnRed(i, s)
+            if self.interState[i] == 'GREEN':
+                for s in self.m.incoming[i]:
+                    self.turnGreen(i, s)
+            if self.interState[i] == 'horizontal': # len(incoming[i]) = 4 required
+                nghs = self.m.incoming[i]
+                self.turnGreen(i, nghs[0])
+                self.turnRed(i, nghs[1])
+                self.turnGreen(i, nghs[2])
+                self.turnRed(i, nghs[3])
+            if self.interState[i] == 'vertical':     # len(incoming[i]) = 4 required
+                nghs = self.m.incoming[i]
+                self.turnGreen(i, nghs[1])
+                self.turnRed(i, nghs[0])
+                self.turnGreen(i, nghs[3])
+                self.turnRed(i, nghs[2])
+            if self.interState[i] == 'hleft':        # len(incoming[i]) = 4 required
+                pass
+            if self.interState[i] == 'vleft':         # len(incoming[i]) = 4 required
+                pass
