@@ -221,27 +221,43 @@ class Master:
         self.trafficLights[inter]['Red'].append(street)
         self.updateBlocked()
 
+
+
     def updateInterState(self):
         for i in self.interState.keys():
             if self.interState[i] == 'RED':
-                for s in self.m.incoming[i]:
-                    self.turnRed(i, s)
+                self.trafficLights[i]['Green'] = []
+                self.trafficLights[i]['Red'] = self.m.incoming[i]
             if self.interState[i] == 'GREEN':
-                for s in self.m.incoming[i]:
-                    self.turnGreen(i, s)
+                self.trafficLights[i]['Red'] = []
+                self.trafficLights[i]['Green'] = self.m.incoming[i]
             if self.interState[i] == 'horizontal': # len(incoming[i]) = 4 required
+                reds = []
+                greens = []
                 nghs = self.m.incoming[i]
-                self.turnGreen(i, nghs[0])
-                self.turnRed(i, nghs[1])
-                self.turnGreen(i, nghs[2])
-                self.turnRed(i, nghs[3])
+                reds.append(nghs[0])
+                reds.append(nghs[2])
+                greens.append(nghs[1])
+                greens.append(nghs[3])
+                self.trafficLights[i]['Red'] = reds
+                self.trafficLights[i]['Green'] = greens
             if self.interState[i] == 'vertical':     # len(incoming[i]) = 4 required
+                reds = []
+                greens = []
                 nghs = self.m.incoming[i]
-                self.turnGreen(i, nghs[1])
-                self.turnRed(i, nghs[0])
-                self.turnGreen(i, nghs[3])
-                self.turnRed(i, nghs[2])
+                reds.append(nghs[1])
+                reds.append(nghs[3])
+                greens.append(nghs[0])
+                greens.append(nghs[2])
+                self.trafficLights[i]['Red'] = reds
+                self.trafficLights[i]['Green'] = greens
             if self.interState[i] == 'hleft':        # len(incoming[i]) = 4 required
                 pass
             if self.interState[i] == 'vleft':         # len(incoming[i]) = 4 required
                 pass
+        self.updateBlocked()
+
+    def changeInterState(self, inter, mode):
+        self.interState[inter] = mode
+        self.updateInterState()
+        

@@ -26,7 +26,9 @@ if __name__ == "__main__":
         mas.timeStep()
         mas.printCars()
         if i == 10:
-            mas.turnGreen(2,2)
+            mas.changeInterState(2, 'horizontal')
+        if i == 20:
+            mas.changeInterState(2, 'vertical')
 
 
 
