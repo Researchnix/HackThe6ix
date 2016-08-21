@@ -30,6 +30,7 @@ class RoutePlanner:
     # This function returns the list of intersections
     # that leads from start to finish on the map m
     def calcCoarseRoute(self, start, finish):
+        """
         distances = {}
         predecessors = {}
         to_assess = self.graph.keys()
@@ -55,5 +56,7 @@ class RoutePlanner:
     # This function calculates the fine route dependent
     # on the previously computed coarse route
     def calcFineRoute(self, coarse):
+    """
         result = []
         return result
+

@@ -53,12 +53,17 @@ class Master:
         # RoutePlanner
         self.navi.setMap(self.m)
 
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+    """  LOADING STUFF  """
+    """ """ """ """ """ """
+    """ """ """ """ """ """
 
     def loadIntersections(self):
         f = open('Intersections.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addIntersection(line[-1])
+            self.m.addIntersection(int(line[-1]))
         f.close()
 
     def loadStreets(self):
@@ -85,26 +90,64 @@ class Master:
 
 
 
+    """ """ """ """ """ """
+    """ """ """ """ """ """
     """ ROUTE CALCULATION """
+    """ """ """ """ """ """
+    """ """ """ """ """ """
 
     def calculateRoutes(self):
         # Give every car a coarse route
-        for c in self.cars:
-            c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
+        #for c in self.cars:
+        #    c.coarseRoute = self.navi.calcCoarseRoute(c.start, c.destination)
 
-        #self.cars[0].coarseRoute = [2,3,6]
+        self.cars[0].coarseRoute = [0,2,3,6]
+
+        for c in self.cars:
+            print c.name + '   coarse   ' + str(c.coarseRoute)
 
         # Give every car a fine route based on its coarse route
         # move this function to Routeplanner later
-        #for c in self.cars:
-        #    c.fineRoute = self.navi.calcFineRoute(c.coarseRoute)
         for c in self.cars:
-            print c.coarseRoute
+            c.fineRoute = self.calcFineRoute(c.coarseRoute)
+
+        for c in self.cars:
+            print c.name + '   fine   ' + str(c.fineRoute)
+
+
+    # This function calculates the fine route dependent
+    # on the previously computed coarse route
+    def calcFineRoute(self, coarse):
+        fine = []
+        # Iterate over every way point except the last one
+        # and add the fine points of every street connecting
+        # the way point with its successor by the fine route
+        for w in range(len(coarse) - 1) :
+            street = self.m.findStreet(coarse[w], coarse[w+1])
+            length = self.m.streets[street][-1]
+            # doe the fine route
+            for i in range(length):
+                fine.append((street, i + 1))
+        return fine
+
 
 
 
         
 
+
+
+
+
+
+
+
+
+    """ """ """ """ """ """
+    """ """ """ """ """ """
+    """ STEPPING STUFF """
+    """ """ """ """ """ """
+    """ """ """ """ """ """
 
     def canProgress(self, car):
         return not (car.nextPos() in self.blocked)

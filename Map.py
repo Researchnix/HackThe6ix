@@ -27,3 +27,12 @@ class Map:
         s = Street.Street(From, To, length)
         self.streets.append(s)
         '''
+
+
+    # Find the right street connecting two intersections
+    # The resulst should by assumption exist and be unique!!
+    def findStreet(self, start, finish):
+        t = [start, finish]
+        for s in self.streets:
+            if s[:2] == t or s[:2] == t[::-1]:
+                return self.streets.index(s)

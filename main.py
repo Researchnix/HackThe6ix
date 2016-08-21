@@ -26,7 +26,7 @@ if __name__ == "__main__":
         if i == 6:
             mas.blocked.remove((0,3))
 
-    print "ROUTE CLAC STUFF"
+    print "\nROUTE CLAC STUFF"
     mas.calculateRoutes()
 
 
