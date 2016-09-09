@@ -13,6 +13,7 @@ class Car:
     #pos = 0
     curPos = (0,0)
     oldPos = (0,0)
+    needsUpdate = False
     nextIntersection = 0
     name = ""
     # Index of starting intersection and desired intersection to travel to

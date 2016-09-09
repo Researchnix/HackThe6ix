@@ -55,7 +55,9 @@ class Painter(Frame):
         self.mas.printCars()
 
         for car in self.mas.cars:
-            self.updateCar(car)
+            if car.needsUpdate:
+                self.updateCar(car)
+                car.needsUpdate = False
         self.after(100, self.update)
 
 

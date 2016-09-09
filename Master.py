@@ -251,13 +251,14 @@ class Master:
         #########################
         # Insert the model here #
         #########################
-        #self.useModel1(8, total)
-        self.useModel2(10, 10, total)
+        self.useModel1(8, total)
+        #self.useModel2(10, 10, total)
         if len(self.cars) == 0:
             sys.exit("All cars reached their destination")
         self.timeStep()
         if self.verbose:
             self.printCars()
+            print self.interState
         # Check if any car reached its destination
         for c in self.cars[::-1]:
             if c.destinationReached:
@@ -294,6 +295,7 @@ class Master:
                     c.oldPos = c.curPos
                     c.curPos = c.fineRoute.pop(0)             # move car forward by one unit
                     self.blocked.append(c.curPos)   # call dips on the current position
+                    c.needsUpdate = True
                     if len(c.fineRoute) == 0:
                         c.destinationReached = True
         
