@@ -75,15 +75,21 @@ class Master:
 
         # Initialize so far only one car
         # start, destination, name
-        car1 = Car.Car(5, 11, "Porsche   ")
-        car2 = Car.Car(19, 18, "Volkswagen")
-        car3 = Car.Car(27, 11, "A")
-        car4 = Car.Car(11, 5, "B")
-        self.cars.append(car1)
-        self.cars.append(car2)
-        self.cars.append(car3)
-        self.cars.append(car4)
-        #self.initializeRandomCars(8)
+        #car1 = Car.Car(5, 30, "Porsche   ")
+        #car2 = Car.Car(19, 18, "Volkswagen")
+        #car3 = Car.Car(27, 11, "A")
+        #car4 = Car.Car(11, 5, "B")
+        #car5 = Car.Car(30, 12, "C")
+        #car6 = Car.Car(8, 26, "D")
+        #car7 = Car.Car(11, 27, "E")
+        #self.cars.append(car1)
+        #self.cars.append(car2)
+        #self.cars.append(car3)
+        #self.cars.append(car4)
+        #self.cars.append(car5)
+        #self.cars.append(car6)
+        #self.cars.append(car7)
+        self.initializeRandomCars(20)
         # Calculate all the routes of the cars
         self.calculateRoutes()
         # Prepare the evaluation of the efficiency
@@ -252,7 +258,7 @@ class Master:
         # Insert the model here #
         #########################
         self.useModel1(8, total)
-        #self.useModel2(10, 10, total)
+        #self.useModel2(5, 5, total)
         if len(self.cars) == 0:
             sys.exit("All cars reached their destination")
         self.timeStep()
