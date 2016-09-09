@@ -58,7 +58,7 @@ class Painter(Frame):
             if car.needsUpdate:
                 self.updateCar(car)
                 car.needsUpdate = False
-        self.after(100, self.update)
+        self.after(70, self.update)
 
 
     def updateCar(self, car):
