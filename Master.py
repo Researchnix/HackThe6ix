@@ -6,6 +6,7 @@
 #  Copyright 2016 Researchnix. All rights reserved.
 #
 
+import sys
 from random import *
 
 import Map
@@ -38,6 +39,7 @@ class Master:
     interState = {}
 
     # Evaluation helpers
+    evaluation = {}
     numberOfCars = 2
     travelLength = {}
 
@@ -95,8 +97,8 @@ class Master:
         print '... done!'
 
     def initializeRandomCars(self, n):
-        everywhere = self.m.intersections
-        available = self.m.intersections
+        everywhere = self.m.intersections.keys()
+        available = self.m.intersections.keys()
         for x in range(n):
             start  = available[randint(0,len(available)-1)]
             finish  = everywhere[randint(0,len(everywhere)-1)]
@@ -127,8 +129,17 @@ class Master:
         f = open('inter.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addIntersection(int(line[0]))
+            self.m.addIntersection(int(line[0]), int(line[1]), int(line[2]))
         f.close()
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### MAKING DATA AVAILABLE ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
+
+
+    #def getInitializionData(self):
 
 
 
@@ -231,40 +242,38 @@ class Master:
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
     # Do as many as maxRunTime steps to try to get every car to its destination
-    def run(self):
-        print "\n\n"
-        print "######################################################################"
-        print "TIME STEPPING STARTS HERE"
-        print "######################################################################"
-        print "\n\n"
-        evaluation = {}
-        for t in range(1,self.maxRunTime):
-            #########################
-            # Insert the model here #
-            #########################
-            self.useModel1(8, t)
-            #self.useModel2(10, 10, t)
-            if len(self.cars) == 0:
-                break
-            self.timeStep()
-            if self.verbose:
-                self.printCars()
-            # Check if any car reached its destination
-            for c in self.cars[::-1]:
-                if c.destinationReached:
-                    evaluation[c.name] = t
-                    self.blocked.remove(c.curPos)
-                    self.cars.remove(c)
-        print "\n\n"
-        print "######################################################################"
-        print "All cars are done ... or the time is up "
-        print "Evaluation of the time it took each car " + str(evaluation)
-        print "Total time a car was using fuel = " + str(sum(evaluation.values()))
-        print "Relative inefficiency =  " + str(sum(evaluation.values()) / self.numberOfCars)
-        print "\n\n"
-        diff = [evaluation.values()[c] -self.travelLength.values()[c] for c in range(len(evaluation))]
-        print "Time a car was standing still =" + str(diff)
-        print "Overall time a car was waiting for a traffic light = " + str(sum(diff))
+    def run(self, total):
+        #print "\n\n"
+        #print "######################################################################"
+        #print "TIME STEPPING STARTS HERE"
+        #print "######################################################################"
+        #print "\n\n"
+        #########################
+        # Insert the model here #
+        #########################
+        #self.useModel1(8, total)
+        self.useModel2(10, 10, total)
+        if len(self.cars) == 0:
+            sys.exit("All cars reached their destination")
+        self.timeStep()
+        if self.verbose:
+            self.printCars()
+        # Check if any car reached its destination
+        for c in self.cars[::-1]:
+            if c.destinationReached:
+                self.evaluation[c.name] = total
+                self.blocked.remove(c.curPos)
+                self.cars.remove(c)
+        #print "\n\n"
+        #print "######################################################################"
+        #print "All cars are done ... or the time is up "
+        #print "Evaluation of the time it took each car " + str(self.evaluation)
+        #print "Total time a car was using fuel = " + str(sum(self.evaluation.values()))
+        #print "Relative inefficiency =  " + str(sum(self.evaluation.values()) / self.numberOfCars)
+        #print "\n\n"
+        #diff = [self.evaluation.values()[c] -self.travelLength.values()[c] for c in range(len(self.evaluation))]
+        #print "Time a car was standing still =" + str(diff)
+        #print "Overall time a car was waiting for a traffic light = " + str(sum(diff))
 
     def canProgress(self, car):
         return not (car.nextPos() in self.blocked)
@@ -282,6 +291,7 @@ class Master:
                     if c.curPos in self.blocked:
                         # clear the spot that the car was on
                         self.blocked.remove(c.curPos)
+                    c.oldPos = c.curPos
                     c.curPos = c.fineRoute.pop(0)             # move car forward by one unit
                     self.blocked.append(c.curPos)   # call dips on the current position
                     if len(c.fineRoute) == 0:
@@ -297,7 +307,7 @@ class Master:
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##### #
 
     def updateBlocked(self):
-        for i in self.m.intersections:
+        for i in self.m.intersections.keys():
             # We need to remove all blocks from this intersections that are in Green
             # and add all the ones that are in Red
             for g in self.trafficLights[i]['Green']:

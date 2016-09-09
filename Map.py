@@ -9,7 +9,8 @@
 import Street
 
 class Map:
-    intersections = []
+    #intersections = []
+    intersections = {}
     streets = []
     incoming = {}      # dic from intersections to incoming streets to this intersection
     character = {}     # number of incoming streets for each crossing
@@ -17,8 +18,8 @@ class Map:
 
 
     # the index could also be a label
-    def addIntersection(self, index):
-        self.intersections.append(index) 
+    def addIntersection(self, index, x, y):
+        self.intersections[index] = [x,y]
 
     # the index could also be a label
     # two different ways of handling streets

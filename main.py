@@ -9,7 +9,7 @@
 import sys
 import time
 
-import Master
+import Painter
 #import visualization
 
 
@@ -18,10 +18,13 @@ if __name__ == "__main__":
     t = time.time()
 
     # Initialize the Master and check its state
-    mas = Master.Master()
-    mas.printState()
-    mas.run()
+    #mas = Master.Master()
+    #mas.printState()
+    #mas.run()
     #visualization.visualization()
+
+    pain = Painter.Painter()
+    pain.mainloop()
 
 
     print "\n\nDone in " + str(time.time() - t) + " s"

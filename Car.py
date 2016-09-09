@@ -12,6 +12,7 @@ class Car:
     #street = 0
     #pos = 0
     curPos = (0,0)
+    oldPos = (0,0)
     nextIntersection = 0
     name = ""
     # Index of starting intersection and desired intersection to travel to
@@ -36,4 +37,5 @@ class Car:
 
     def nextPos(self):
         return self.fineRoute[0]
+
 
