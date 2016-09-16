@@ -6,7 +6,7 @@ import Master
 class Painter(Frame):
     total = 1
     mas = Master.Master()
-    scaling = 10.0
+    scaling = 2.0
     intersection_Size = 4
 
 
@@ -58,7 +58,7 @@ class Painter(Frame):
             if car.needsUpdate:
                 self.updateCar(car)
                 car.needsUpdate = False
-        self.after(70, self.update)
+        self.after(100, self.update)
 
 
     def updateCar(self, car):

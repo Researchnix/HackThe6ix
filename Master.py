@@ -132,10 +132,10 @@ class Master:
             self.trafficLights[i] = state
 
     def loadIntersections(self):
-        f = open('inter.txt', 'r')
+        f = open('inter_gen.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addIntersection(int(line[0]), int(line[1]), int(line[2]))
+            self.m.addIntersection(int(line[0]), 250 + float(line[1]), 250 + float(line[2]))
         f.close()
 
 
@@ -257,8 +257,8 @@ class Master:
         #########################
         # Insert the model here #
         #########################
-        self.useModel1(8, total)
-        #self.useModel2(5, 5, total)
+        #self.useModel1(8, total)
+        self.useModel2(11, 11, total)
         if len(self.cars) == 0:
             sys.exit("All cars reached their destination")
         self.timeStep()
