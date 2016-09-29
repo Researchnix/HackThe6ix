@@ -4,10 +4,13 @@ import Master
 
 
 class Painter(Frame):
+    width = 1300
+    height = 800
     total = 1
     mas = Master.Master()
-    scaling = 2.0
+    scaling = 1.0
     intersection_Size = 4
+    origin = [0,0]
 
 
 
@@ -24,6 +27,8 @@ class Painter(Frame):
         self.initializeFrame(master)
         self.initializeMap()
         self.after(10, self.update)
+
+        self.origin = [self.width / 2, self.height / 2]
 
 
     def initializeFrame(self, master):
@@ -105,7 +110,7 @@ class Painter(Frame):
     def createWidgets(self):
         self.QUIT = Button(self, text='QUIT', foreground='red', command=self.quit)
         self.QUIT.pack(side=BOTTOM, fill=BOTH)
-        self.draw = Canvas(self, width="10i", height="10i")
+        self.draw = Canvas(self, width=self.width, height=self.height)
         #self.speed = Scale(self, orient=HORIZONTAL, from_=-100, to=100)
         #self.speed.pack(side=BOTTOM, fill=X)
 

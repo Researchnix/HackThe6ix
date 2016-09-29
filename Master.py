@@ -132,7 +132,7 @@ class Master:
             self.trafficLights[i] = state
 
     def loadIntersections(self):
-        f = open('inter_gen.txt', 'r')
+        f = open('inter.txt', 'r')
         for line in f:
             line = line.split()
             self.m.addIntersection(int(line[0]), 250 + float(line[1]), 250 + float(line[2]))

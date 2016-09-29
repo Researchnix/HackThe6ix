@@ -18,7 +18,8 @@ class RandomGenerator:
     approxDist = 10
     sigma = 3
     result = []
-    filename = "inter_gen.txt"
+    filename1 = "inter_gen.txt"
+    filename2 = "ori_gen.txt"
 
 
 
@@ -57,8 +58,9 @@ class RandomGenerator:
             radiusCounter += 1
 
     def writeToFile(self):
-        self.deleteFile()
-        f = open(self.filename, 'a')
+        # Write the intersections to the file
+        self.deleteFile(self.filename1)
+        f = open(self.filename1, 'a')
         for elem in self.result:
             newelem = map(int, map(abs, elem))
             newnewelem = map(str, newelem)
@@ -66,12 +68,52 @@ class RandomGenerator:
             f.write(line)
         f.close()
 
+        # Write the orientation to ori_gen.txt
+        self.deleteFile(self.filename2)
+        f = open(self.filename2, 'a')
+        nodes = [e[0] for e in self.result]
+        # Mix them up
+        mixed = nodes
+        orientations = [mixed[:]]
+        for a in range(3):
+            for i in range(len(mixed)):
+                j = i
+                while j == i:
+                    j = randint(0,len(mixed) - 1)
+                mixed = self.transposition(mixed, i, j)
+            print mixed
+            orientations.append(mixed[:])
+        #for elem in self.trans(orientations):
+            
+        f.close()
 
 
 
-    def deleteFile(self):
+
+    def transposition(self, lisT, i, j):
+        wait = lisT[i]
+        lisT[i] = lisT[j]
+        lisT[j] = wait
+        return lisT
+
+
+    def trans(self, l):
+        rl = len(l[0]) # column length
+        result = []
+        for i in range(rl):
+            newRow = []
+            for row in l:
+                newRow.append(row[i])
+            result.append(newRow)
+        return result
+
+
+
+
+
+    def deleteFile(self, filename):
         try:
-            os.remove(self.filename)
+            os.remove(filename)
         except OSError:
             pass
 

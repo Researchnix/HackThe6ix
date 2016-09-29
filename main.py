@@ -30,8 +30,6 @@ if __name__ == "__main__":
     rage.generateInter(30)
     rage.writeToFile()
     '''
-
-
     pain = Painter.Painter()
     pain.mainloop()
 
