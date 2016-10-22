@@ -135,7 +135,7 @@ class Master:
         f = open('inter.txt', 'r')
         for line in f:
             line = line.split()
-            self.m.addIntersection(int(line[0]), 250 + float(line[1]), 250 + float(line[2]))
+            self.m.addIntersection(int(line[0]), float(line[1]), float(line[2]))
         f.close()
 
 

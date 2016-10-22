@@ -4,13 +4,14 @@ import Master
 
 
 class Painter(Frame):
-    width = 1300
-    height = 800
+    width = 1000
+    height = 600
     total = 1
     mas = Master.Master()
-    scaling = 1.0
+    scaling = 13.0
     intersection_Size = 4
-    origin = [0,0]
+    #origin = [width / 2, height / 2]
+    origin = [50, 50]
 
 
 
@@ -29,6 +30,7 @@ class Painter(Frame):
         self.after(10, self.update)
 
         self.origin = [self.width / 2, self.height / 2]
+        #self.origin = [0,0]
 
 
     def initializeFrame(self, master):
@@ -38,13 +40,25 @@ class Painter(Frame):
 
     def initializeMap(self):
         self.mas.printState()
+        #self.drawGrid()
         # Draw the intersections and streets
         for inter in self.mas.m.intersections:
-            self.drawIntersection(inter, self.scaling * self.mas.m.intersections[inter][0], self.scaling * self.mas.m.intersections[inter][1])
+            self.drawIntersection(inter, self.scaling * self.mas.m.intersections[inter][0] + self.origin[0], self.scaling * self.mas.m.intersections[inter][1] + self.origin[1])
         for street in self.mas.m.streets:
             self.drawStreet(street)
         for car in self.mas.cars:
             self.drawCar(car)
+
+
+    def drawGrid(self):
+        for a in range(0, self.height, 50):
+            for b in range(0, self.width, 50):
+                self.draw.create_rectangle(a-self.intersection_Size, b-self.intersection_Size, a+self.intersection_Size  ,b+self.intersection_Size , fill="green")
+        a = self.origin[0]
+        b = self.origin[1]
+        self.draw.create_rectangle(a-self.intersection_Size, b-self.intersection_Size, a+self.intersection_Size  ,b+self.intersection_Size , fill="red")
+
+
 
 
 
@@ -75,16 +89,16 @@ class Painter(Frame):
         self.draw.create_rectangle(x-self.intersection_Size, y-self.intersection_Size, x+self.intersection_Size  ,y+self.intersection_Size ,tags=label, fill="blue")
 
     def drawStreet(self, street):
-        x0 = self.mas.m.intersections[street[0]][0] * self.scaling
-        y0 = self.mas.m.intersections[street[0]][1] * self.scaling
-        x1 = self.mas.m.intersections[street[1]][0] * self.scaling
-        y1 = self.mas.m.intersections[street[1]][1] * self.scaling
+        x0 = self.mas.m.intersections[street[0]][0] * self.scaling + self.origin[0]
+        y0 = self.mas.m.intersections[street[0]][1] * self.scaling + self.origin[1]
+        x1 = self.mas.m.intersections[street[1]][0] * self.scaling + self.origin[0]
+        y1 = self.mas.m.intersections[street[1]][1] * self.scaling + self.origin[1]
         #self.draw.create_rectangle(x0-1, y0-1, x1+1, y1)
         self.draw.create_line(x0, y0, x1, y1, fill="red",)
 
     def drawCar(self, car):
-        x = self.getXY(car.curPos)[0]
-        y = self.getXY(car.curPos)[1]
+        x = self.getXY(car.curPos)[0] + self.origin[0]
+        y = self.getXY(car.curPos)[1] + self.origin[1]
         self.draw.create_rectangle(x - 3, y - 3, x + 3, y + 3, tags=car.name, fill="green")
 
 
